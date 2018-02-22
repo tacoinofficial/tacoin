@@ -19,7 +19,7 @@ contract ERC223ReceivingContract {
 contract Tacoin {
     string internal _symbol = "TACO";
     string internal _name = "Tacoin";
-    uint8 internal _decimals 18;
+    uint8 internal _decimals = 18;
     uint internal _totalSupply = 10000000000000000000000000;
     mapping (address => uint) internal _balanceOf;
     mapping (address => mapping (address => uint)) internal _allowances;
