@@ -82,7 +82,7 @@ contract Tacoin is Token("TACO", "Tacoin", 18, 10000000000000000000000000), ERC2
 
     using SafeMath for uint;
 
-    function MyFirstToken() public {
+    function Tacoin() public {
         _balanceOf[msg.sender] = _totalSupply;
     }
 
