@@ -16,19 +16,19 @@ contract ERC223ReceivingContract {
     function tokenFallback(address _from, uint _value, bytes _data) public;
 }
 
-contract Tacoin {
-    string internal _symbol = "TACO";
-    string internal _name = "Tacoin";
-    uint8 internal _decimals = 18;
+contract Token {
+    string internal _symbol;
+    string internal _name;
+    uint8 internal _decimals;
     uint internal _totalSupply = 10000000000000000000000000;
     mapping (address => uint) internal _balanceOf;
     mapping (address => mapping (address => uint)) internal _allowances;
 
-    function Tacoin(string symbol, string name, uint8 decimals, uint totalSupply) public {
-        _symbol = "TACO";
-        _name = "Tacoin";
-        _decimals = 18;
-        _totalSupply = 10000000000000000000000000;
+    function Token(string symbol, string name, uint8 decimals, uint totalSupply) public {
+        _symbol = symbol;
+        _name = name;
+        _decimals = decimals;
+        _totalSupply = totalSupply;
     }
 
     function name() public constant returns (string) {
@@ -82,7 +82,7 @@ contract Tacoin is Token("TACO", "Tacoin", 18, 10000000000000000000000000), ERC2
 
     using SafeMath for uint;
 
-    function Tacoin() public {
+    function MyFirstToken() public {
         _balanceOf[msg.sender] = _totalSupply;
     }
 
