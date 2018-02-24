@@ -4,12 +4,15 @@ interface ERC223 {
     function transferFrom(address _from, address _to, uint _value) external returns (bool);
     function approve(address _spender, uint _value) external returns (bool);
     function allowance(address _owner, address _spender) external constant returns (uint);
+    function transfer(address _to, uint _value, bytes _data) external returns (bool success);
+    function transfer(address _to, uint _value) external returns (bool success); 
+    function transfer(address to, uint value, bytes data, string custom_fallback) external returns (bool ok);
+    
     event Approval(address indexed _owner, address indexed _spender, uint _value);
-    function transfer(address _to, uint _value, bytes _data) external returns (bool);
     event Transfer(address indexed from, address indexed to, uint value, bytes indexed data);
 }
 
-contract ERC223ReceivingContract {
+contract ERC223Receiver {
     function tokenFallback(address _from, uint _value, bytes _data) public;
 }
 
@@ -91,7 +94,7 @@ contract Tacoin is Token("TACO", "Tacoin", 18, 10000000000000000000000000), ERC2
         return _balanceOf[_addr];
     }
 
-    function transfer(address _to, uint _value) external returns (bool) {
+    function transfer(address _to, uint _value) external returns (bool success) {
         if (_value > 0 &&
             _value <= _balanceOf[msg.sender] &&
             !isContract(_to)) {
@@ -103,13 +106,13 @@ contract Tacoin is Token("TACO", "Tacoin", 18, 10000000000000000000000000), ERC2
         return false;
     }
 
-    function transfer(address _to, uint _value, bytes _data) external returns (bool) {
+    function transfer(address _to, uint _value, bytes _data) external returns (bool success) {
         if (_value > 0 &&
             _value <= _balanceOf[msg.sender] &&
             isContract(_to)) {
             _balanceOf[msg.sender] = _balanceOf[msg.sender].sub(_value);
             _balanceOf[_to] = _balanceOf[_to].add(_value);
-            ERC223ReceivingContract _contract = ERC223ReceivingContract(_to);
+            ERC223Receiver _contract = ERC223Receiver(_to);
             _contract.tokenFallback(msg.sender, _value, _data);
             Transfer(msg.sender, _to, _value, _data);
             return true;
@@ -149,4 +152,3 @@ contract Tacoin is Token("TACO", "Tacoin", 18, 10000000000000000000000000), ERC2
         return _allowances[_owner][_spender];
     }
 }
-
