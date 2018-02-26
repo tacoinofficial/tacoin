@@ -1,6 +1,6 @@
 pragma solidity ^0.4.0;
 
-interface ERC223 {
+contract ERC223 {
     function transferFrom(address _from, address _to, uint _value) external returns (bool);
     function approve(address _spender, uint _value) external returns (bool);
     function allowance(address _owner, address _spender) external constant returns (uint);
@@ -12,7 +12,7 @@ interface ERC223 {
     event Transfer(address indexed from, address indexed to, uint value, bytes indexed data);
 }
 
-contract ERC223Receiver {
+contract ERC223ReceivingContract {
     function tokenFallback(address _from, uint _value, bytes _data) public;
 }
 
@@ -55,25 +55,25 @@ contract Token {
 library SafeMath {
   function mul(uint256 a, uint256 b) internal pure returns (uint256) {
     uint256 c = a * b;
-    assert(a == 0 || c / a == b);
+    require(a == 0 || c / a == b);
     return c;
   }
 
   function div(uint256 a, uint256 b) internal pure returns (uint256) {
-    // assert(b > 0); // Solidity automatically throws when dividing by 0
+    // require(b > 0); // Solidity automatically throws when dividing by 0
     uint256 c = a / b;
-    // assert(a == b * c + a % b); // There is no case in which this doesn't hold
+    // require(a == b * c + a % b); // There is no case in which this doesn't hold
     return c;
   }
 
   function sub(uint256 a, uint256 b) internal pure returns (uint256) {
-    assert(b <= a);
+    require(b <= a);
     return a - b;
   }
 
   function add(uint256 a, uint256 b) internal pure returns (uint256) {
     uint256 c = a + b;
-    assert(c >= a);
+    require(c >= a);
     return c;
   }
 }
@@ -94,7 +94,7 @@ contract Tacoin is Token("TACO", "Tacoin", 18, 10000000000000000000000000), ERC2
         return _balanceOf[_addr];
     }
 
-    function transfer(address _to, uint _value) external returns (bool success) {
+    function transfer(address _to, uint _value) external returns (bool) {
         if (_value > 0 &&
             _value <= _balanceOf[msg.sender] &&
             !isContract(_to)) {
@@ -106,13 +106,13 @@ contract Tacoin is Token("TACO", "Tacoin", 18, 10000000000000000000000000), ERC2
         return false;
     }
 
-    function transfer(address _to, uint _value, bytes _data) external returns (bool success) {
+    function transfer(address _to, uint _value, bytes _data) external returns (bool) {
         if (_value > 0 &&
             _value <= _balanceOf[msg.sender] &&
             isContract(_to)) {
             _balanceOf[msg.sender] = _balanceOf[msg.sender].sub(_value);
             _balanceOf[_to] = _balanceOf[_to].add(_value);
-            ERC223Receiver _contract = ERC223Receiver(_to);
+            ERC223ReceivingContract _contract = ERC223ReceivingContract(_to);
             _contract.tokenFallback(msg.sender, _value, _data);
             Transfer(msg.sender, _to, _value, _data);
             return true;
