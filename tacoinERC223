@@ -35,8 +35,12 @@ contract ERC223 {
   function decimals() public constant returns (uint8 _decimals);
   function totalSupply() public constant returns (uint256 _supply);
 
+  function approve(address _spender, uint _value) external returns (bool);
+  function allowance(address _owner, address _spender) external constant returns (uint); 
   function transfer(address to, uint value) public returns (bool ok);
   function transfer(address to, uint value, bytes data) public returns (bool ok);
+  
+  event Approval(address indexed _owner, address indexed _spender, uint _value);
   event Transfer(address indexed _from, address indexed _to, uint256 _value);
   event ERC223Transfer(address indexed _from, address indexed _to, uint256 _value, bytes _data);
 }
@@ -49,6 +53,7 @@ contract Tacoin is ERC223 {
   using SafeMath for uint;
 
   mapping(address => uint) balances;
+  mapping (address => mapping (address => uint)) internal _allowances;
 
   string public name = "Tacoin";
   string public symbol = "TACO";
@@ -82,6 +87,16 @@ function Tacoin (
   function totalSupply() public constant returns (uint256 _totalSupply) {
       return totalSupply;
   }
+  
+  function approve(address _spender, uint _value) external returns (bool) {
+        _allowances[msg.sender][_spender] = _allowances[msg.sender][_spender].add(_value);
+        Approval(msg.sender, _spender, _value);
+        return true;
+  
+  }
+  function allowance(address _owner, address _spender) external constant returns (uint) {
+        return _allowances[_owner][_spender];
+    }
 
   // Function that is called when a user or another contract wants to transfer funds .
   function transfer(address _to, uint _value, bytes _data) public returns (bool success) {
