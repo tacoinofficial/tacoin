@@ -39,6 +39,7 @@ contract ERC223 {
   function allowance(address _owner, address _spender) external constant returns (uint); 
   function transfer(address to, uint value) public returns (bool ok);
   function transfer(address to, uint value, bytes data) public returns (bool ok);
+  function transfer(address _from, address _to, uint _value) internal;
   
   event Approval(address indexed _owner, address indexed _spender, uint _value);
   event Transfer(address indexed _from, address indexed _to, uint256 _value);
@@ -160,4 +161,22 @@ function Tacoin (
   function balanceOf(address _owner) public constant returns (uint balance) {
     return balances[_owner];
   }
+  
+  function transfer(address _from, address _to, uint _value) internal {
+        
+        require(_to != 0x0);
+        
+        require(balances[_from] >= _value);
+        
+        require(balances[_to] + _value > balances[_to]);
+        
+        uint previousBalances = balances[_from] + balances[_to];
+        
+        balances[_from] -= _value;
+        
+        balances[_to] += _value;
+        Transfer(_from, _to, _value);
+        
+        assert(balances[_from] + balances[_to] == previousBalances);
+    }
 }
