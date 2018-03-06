@@ -168,8 +168,8 @@ function Tacoin (
             _allowances[_from][msg.sender] >= _value &&
             balances[_from] >= _value) {
             balances[_from] = balances[_from].sub(_value);
-            balances[_to] = balances[_to].add(_value);
             _allowances[_from][msg.sender] = _allowances[_from][msg.sender].sub(_value);
+            balances[_to] = balances[_to].add(_value);
             Transfer(_from, _to, _value);
             return true;
         }
